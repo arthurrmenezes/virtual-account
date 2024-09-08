@@ -1,67 +1,38 @@
 package application;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 import entities.Account;
 import exceptions.AmountException;
 
-public class Menu {
+public class OperationsMenu {
 
-	List<Account> accountList = new ArrayList<>();
+	private int n = 0;
 	private static Scanner scanner = new Scanner(System.in);
-
-	public void accountRegister() {
-
-		Boolean validInput = false;
-		
-		System.out.println("Account data:\n");
-
-		while (validInput == false) {
-			try {
-				System.out.print("Name: ");
-				String name = scanner.nextLine();
-				System.out.print("Starter amount: ");
-				Double amount = scanner.nextDouble();
-				scanner.nextLine();
-
-				Account account = new Account(name, amount);
-				accountList.add(account);
-
-				validInput = true;
-				menuInteration();
-
-			} catch (InputMismatchException exception) {
-				System.out.println("Error: Invalid input. Please enter a valid number!\n");
-				scanner.nextLine();
-			}
-		}
-	}
+	private RegisterMenu registerMenu = new RegisterMenu();
+	Account account = registerMenu.getAccount();
 
 	public void menuInteration() {
 		
-		int n = 0;
-
 		do {
 			menuFieldsString();
 
 			try {
 				switch (n = scanner.nextInt()) {
 				case 1:
-					System.out.println("Amount: $" + String.format("%.2f", accountList.get(0).getAmount()));
+					System.out.println("Amount: $" + String.format("%.2f", account.getAmount()));
 					break;
 				case 2:
 					System.out.print("Amount to deposit: ");
-					accountList.get(0).deposit(scanner.nextDouble());
+					account.deposit(scanner.nextDouble());
 					break;
 				case 3:
 					System.out.print("Amount to transfer: ");
-					accountList.get(0).transfer(scanner.nextDouble());
+					account.transfer(account, scanner.nextDouble());
 					break;
 				case 4:
-					for (Account acc : accountList) {
+					for (Account acc : account.getAccountList()) {
 						System.out.println(acc.toString());
 					}
 					break;
