@@ -3,15 +3,21 @@ package application;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+
 import exceptions.AmountException;
 import model.Account;
+import model.CurrencyQuote;
+import services.ConsumeApi;
 
 public class Menu {
 	
 	private static Scanner scanner = new Scanner(System.in);
 	private Account account;
 	private Boolean validInput = true;
-
+	private ConsumeApi consumeApi = new ConsumeApi();
+	private Gson gson = new Gson();
+	
 	public void inicialScreen() {
 		
 		while (validInput) {
@@ -163,6 +169,14 @@ public class Menu {
 					account.getAccountManager().getAccountList();
 					break;
 				case 6:
+//					String json = gson.toJson(consumeApi.useApi());
+					System.out.println("\n" + consumeApi.useApi());
+					
+					String json = consumeApi.useApi();
+					CurrencyQuote currencyQuote = gson.fromJson(json, CurrencyQuote.class);
+					System.out.println(currencyQuote.getName());
+					break;
+				case 7:
 					validInput = false;
 					break;
 				default:
@@ -189,9 +203,9 @@ public class Menu {
 		System.out.println("3 - Deposit");
 		System.out.println("4 - Transfer");
 		System.out.println("5 - Account List");
-		System.out.println("6 - Exit");
+		System.out.println("6 - Exchange Rate");
+		System.out.println("7 - Exit");
 		System.out.print("Option: ");
 	}
-
 
 }
