@@ -3,11 +3,11 @@ package application;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 import exceptions.AmountException;
 import model.Account;
-import model.CurrencyQuote;
+//import model.CurrencyQuote;
 import services.ConsumeApi;
 
 public class Menu {
@@ -16,7 +16,7 @@ public class Menu {
 	private Account account;
 	private Boolean validInput = true;
 	private ConsumeApi consumeApi = new ConsumeApi();
-	private Gson gson = new Gson();
+//	private Gson gson = new Gson();
 	
 	public void inicialScreen() {
 		
@@ -172,9 +172,9 @@ public class Menu {
 //					String json = gson.toJson(consumeApi.useApi());
 					System.out.println("\n" + consumeApi.useApi());
 					
-					String json = consumeApi.useApi();
-					CurrencyQuote currencyQuote = gson.fromJson(json, CurrencyQuote.class);
-					System.out.println(currencyQuote.getName());
+//					String json = consumeApi.useApi();
+//					CurrencyQuote currencyQuote = gson.fromJson(json, CurrencyQuote.class);
+//					System.out.println(currencyQuote.getName());
 					break;
 				case 7:
 					validInput = false;
@@ -185,10 +185,10 @@ public class Menu {
 				}
 			} catch (AmountException exception) {
 				System.out.println("Error: " + exception.getMessage());
-				break;
+				scanner.nextLine();
 			} catch (InputMismatchException exception) {
 				System.out.println("Error: Invalid input. Please enter a valid number!");
-				break;
+				scanner.nextLine();
 			}
 
 		}
