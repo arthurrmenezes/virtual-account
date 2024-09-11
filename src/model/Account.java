@@ -39,7 +39,9 @@ public class Account {
 	}
 
 	public Double getBalance() {
-		return balance;
+//		String balance = String.format("%.2f", this.balance);
+//		return Double.valueOf(balance);
+		return this.balance;
 	}
 	
 	public int getId() {
@@ -70,8 +72,8 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return name + "\n" +
-				email + "\n" +
+		return "Account Holder: " + name + "\n" +
+				"Email: " + email + "\n" +
 				"ID: " + getId() +
 				"\nAmount: $" + String.format("%.2f", getBalance()) + "\n";
 	}

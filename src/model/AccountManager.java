@@ -16,9 +16,7 @@ public class AccountManager {
 	}
 	
 	public void getAccountList() {
-		for (Account account : accountList) {
-			System.out.println(account.toString());
-		}
+		accountList.stream().forEach(System.out::println);
 	}
 	
 	public int getTotalNumberOfAccounts() {

@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import exceptions.AmountException;
 import model.Account;
+import model.AccountAuth;
 //import model.CurrencyQuote;
 import services.ConsumeApi;
 
@@ -17,6 +18,7 @@ public class Menu {
 	private Boolean validInput = true;
 	private ConsumeApi consumeApi = new ConsumeApi();
 //	private Gson gson = new Gson();
+	private AccountAuth accountAuth = new AccountAuth();
 	
 	public void inicialScreen() {
 		
@@ -32,7 +34,15 @@ public class Menu {
 				
 				switch (option) {
 				case 1:
-					createAccount();
+					scanner.nextLine();
+					System.out.print("Full Name: ");
+					String name = scanner.nextLine();
+					System.out.print("Email: ");
+					String email = scanner.nextLine();
+					System.out.print("Password: ");
+					String password = scanner.nextLine();
+					accountAuth.createAccount(name, email, password);
+					menuInteration();
 					validInput = false;
 					break;
 				case 2:
@@ -54,40 +64,39 @@ public class Menu {
 		}
 	}
 	
-	public void createAccount() {
-		scanner.nextLine();
-		
-		System.out.print("Full Name: ");
-		String name = scanner.nextLine().trim();
-		name = name.substring(0, 1).toUpperCase() + name.substring(1);
-
-		System.out.print("Email: ");
-		String email = scanner.nextLine();
-		System.out.print("Password: ");
-		String password = scanner.nextLine();
-		
-		account = new Account(name, email, password);
-		
-		menuInteration();
-	}
-	
 	public void login() {
 		scanner.nextLine();
 		
-		System.out.println("\nLogin with Email: ");
-		System.out.println("Login with ID: ");
-		System.out.println("Back");
+		System.out.println("\n1 - Login with Email: ");
+		System.out.println("2 - Login with ID: ");
+		System.out.println("3 - Back");
 		System.out.print("Option: ");
 		int n = scanner.nextInt();
 		
 		switch (n) {
 		case 1:
 			scanner.nextLine();
-			loginEmail();
+			System.out.print("\nEmail: ");
+			String email = scanner.nextLine();
+			System.out.print("Password: ");
+			String password = scanner.nextLine();
+			if (accountAuth.loginEmail(email, password) == true) {
+				menuInteration();
+			} else {
+				login();
+			}
 			break;
 		case 2:
 			scanner.nextLine();
-			loginId();
+			System.out.print("\nID: ");
+			int id = scanner.nextInt();
+			System.out.print("Password: ");
+			password = scanner.nextLine();
+			if (accountAuth.loginId(id, password) == true) {
+				menuInteration();
+			} else {
+				login();
+			}
 			break;
 		case 3:
 			scanner.nextLine();
@@ -96,47 +105,9 @@ public class Menu {
 		default:
 			System.out.println("Error: Invalid input. Please enter a valid option!\n");
 			scanner.nextLine();
+			break;
 			}
 		}
-			
-	public void loginEmail() {
-		
-		try {
-			System.out.print("\nEmail: ");
-			String email = scanner.nextLine();
-			System.out.print("Password: ");
-			String password = scanner.nextLine();
-				
-			if (email == account.getEmail() && password == account.getPassword()) {
-				menuInteration();
-			} else {
-				login();
-			}
-		} catch (InputMismatchException | NullPointerException exception) {
-			System.out.println("Error.\n");
-			inicialScreen();
-		}
-	}
-	
-	public void loginId() {
-		
-		try {
-			System.out.print("\nID: ");
-			int id = scanner.nextInt();
-			System.out.print("Password: ");
-			scanner.nextLine();
-			String password = scanner.nextLine();
-				
-			if (id == account.getId() && password == account.getPassword()) {
-				menuInteration();
-			} else {
-				login();
-			}
-		} catch (InputMismatchException | NullPointerException exception) {
-			System.out.println("Error.\n");
-			inicialScreen();
-		}
-	}
 	
 	public void menuInteration() {
 		
@@ -146,14 +117,23 @@ public class Menu {
 			try {
 				switch (scanner.nextInt()) {
 				case 1:
-					createAccount();
+					scanner.nextLine();
+					System.out.println("Full Name: ");
+					String name = scanner.nextLine();
+					System.out.print("Email: ");
+					String email = scanner.nextLine();
+					System.out.print("Password: ");
+					String password = scanner.nextLine();
+					accountAuth.createAccount(name, email, password);
 					break;
 				case 2:
-					System.out.println("Amount: $" + String.format("%.2f", account.getBalance()));
+					System.out.println("\nAccount Details:\n");
+					System.out.println(accountAuth.getAccount().toString());
 					break;
 				case 3:
 					System.out.print("Amount to deposit: ");
-					account.deposit(scanner.nextDouble());
+					accountAuth.getAccount().deposit(scanner.nextDouble());
+					System.out.println();
 					break;
 				case 4:
 					System.out.print("Destination Account Number: ");
@@ -161,12 +141,12 @@ public class Menu {
 					scanner.nextLine();
 					System.out.print("Amount to transfer: ");
 					
-					account.transfer(account.getAccountManager().getAccountById(id), scanner.nextDouble());
+					accountAuth.getAccount().transfer(accountAuth.getAccount().getAccountManager().getAccountById(id), scanner.nextDouble());
 					scanner.nextLine();
 					break;
 				case 5:
-					System.out.println("\nNumber Total of Accounts: " + account.getAccountManager().getTotalNumberOfAccounts());
-					account.getAccountManager().getAccountList();
+					System.out.println("\nNumber Total of Accounts: " + accountAuth.getAccount().getAccountManager().getTotalNumberOfAccounts());
+					accountAuth.getAccount().getAccountManager().getAccountList();
 					break;
 				case 6:
 //					String json = gson.toJson(consumeApi.useApi());
@@ -199,12 +179,14 @@ public class Menu {
 		System.out.println("***********");
 		System.out.println("\nOperations");
 		System.out.println("1 - Create New Account");
-		System.out.println("2 - Show Amount");
+		System.out.println("2 - Show Account Details");
 		System.out.println("3 - Deposit");
 		System.out.println("4 - Transfer");
 		System.out.println("5 - Account List");
 		System.out.println("6 - Exchange Rate");
 		System.out.println("7 - Exit");
+		System.out.println("\nAmount: " + String.format("%.2f",
+				accountAuth.getAccount().getBalance()));
 		System.out.print("Option: ");
 	}
 
